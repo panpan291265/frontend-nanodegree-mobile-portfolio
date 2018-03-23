@@ -4,6 +4,7 @@ const copy = require('gulp-copy');
 const rename = require('gulp-rename');
 const responsive = require('gulp-responsive');
 const imageMin = require('gulp-imagemin');
+const htmlMin = require('gulp-htmlmin');
 const minifyCss = require('gulp-clean-css');
 const minifyJs = require('gulp-uglify-es').default;
 const runSequence = require('run-sequence');
@@ -17,7 +18,8 @@ const runSequence = require('run-sequence');
     const pathImages = `${folderPrefix}images`;
     const pathCss = `${folderPrefix}css`;
     const pathJs = `${folderPrefix}js`;
-        
+
+
     
     /* images */
 
@@ -26,7 +28,7 @@ const runSequence = require('run-sequence');
     });
 
     gulp.task(`${taskPrefix}minify:images`, function () {
-        return gulp.src([pathImages + '/*.*', !pathImages + '/*.min.*'])
+        return gulp.src([`${pathImages}/*.*`, `!${pathImages}/*.min.*`])
             .pipe(imageMin({
                 verbose: false
             }))
@@ -44,6 +46,25 @@ const runSequence = require('run-sequence');
     });
 
 
+    /* html */
+
+    gulp.task(`${taskPrefix}minify:html`, function() {
+        return gulp.src([`${folderPrefix}*.src-html`])
+          .pipe(htmlMin({collapseWhitespace: true}))
+          .pipe(rename(function (path) {
+            path.extname = '.html';
+            }))
+          .pipe(gulp.dest(folderPrefix)
+        );
+    });
+
+    gulp.task(`${taskPrefix}build:html`, function () {
+        return runSequence(
+            `${taskPrefix}minify:html`
+        );
+    });
+
+
     /* css */
 
     gulp.task(`${taskPrefix}clean:css`, function () {
@@ -51,7 +72,7 @@ const runSequence = require('run-sequence');
     });
 
     gulp.task(`${taskPrefix}minify:css`, function () {
-        return gulp.src([pathCss + '/*.css', !pathCss + '/*.min.css'])
+        return gulp.src([`${pathCss}/*.css`, `!${pathCss}/*.min.css`])
             .pipe(minifyCss())
             .pipe(rename(function (path) {
                 path.extname = '.min.css';
@@ -74,7 +95,7 @@ const runSequence = require('run-sequence');
     });
 
     gulp.task(`${taskPrefix}minify:js`, function () {
-        return gulp.src([pathJs + '/*.js', !pathJs + '/*.min.js'])
+        return gulp.src([`${pathJs}/*.js`, `!${pathJs}/*.min.js`])
             .pipe(minifyJs())
             .pipe(rename(function (path) {
                 path.extname = '.min.js';
@@ -104,7 +125,8 @@ const runSequence = require('run-sequence');
         return runSequence(
             `${taskPrefix}build:images`,
             `${taskPrefix}build:css`,
-            `${taskPrefix}build:js`
+            `${taskPrefix}build:js`,
+            `${taskPrefix}build:html`
         );
     });
 
