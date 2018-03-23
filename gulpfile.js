@@ -2,6 +2,7 @@ const gulp = require('gulp');
 const del = require('del');
 const copy = require('gulp-copy');
 const rename = require('gulp-rename');
+const responsive = require('gulp-responsive');
 const imageMin = require('gulp-imagemin');
 const minifyCss = require('gulp-clean-css');
 const minifyJs = require('gulp-uglify-es').default;
